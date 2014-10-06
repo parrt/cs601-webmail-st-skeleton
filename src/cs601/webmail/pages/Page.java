@@ -1,15 +1,25 @@
 package cs601.webmail.pages;
 
+import cs601.webmail.WebmailServer;
 import cs601.webmail.managers.ErrorManager;
 import cs601.webmail.misc.VerifyException;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupDir;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 
-public class Page {
+public abstract class Page {
+	static STGroup templates = new STGroupDir(WebmailServer.WEBMAIL_TEMPLATES_ROOT); // call unload() to wack the cache
+	static {
+		templates.setListener(WebmailServer.stListener);
+		templates.delimiterStartChar = '$';
+		templates.delimiterStopChar = '$';
+	}
+
 	HttpServletRequest request;
 	HttpServletResponse response;
 	PrintWriter out;
@@ -47,9 +57,13 @@ public class Page {
 		handleDefaultArgs();
 		try {
 			verify(); // check args before generation
-			header();
-			body();
-			footer();
+			ST pageST = templates.getInstanceOf("page");
+			ST bodyST = body();
+			pageST.add("body", bodyST);
+			pageST.add("title", getTitle());
+
+			String page = pageST.render();
+			out.print(page);
 		}
 		catch (VerifyException ve) {
 			// redirect to error page
@@ -58,7 +72,8 @@ public class Page {
 			out.close();
 		}
 	}
-	public void header() { }
-	public void body() { }
-	public void footer() { }
+
+	public abstract ST body();
+
+	public abstract ST getTitle();
 }

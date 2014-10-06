@@ -1,5 +1,7 @@
 package cs601.webmail.pages;
 
+import org.stringtemplate.v4.ST;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,19 +13,12 @@ public class HomePage extends Page {
 	public void verify() { }
 
 	@Override
-	public void header() {
-		out.println("<html>");
-		out.println("<body>");
+	public ST body() {
+		return templates.getInstanceOf("home");
 	}
 
 	@Override
-	public void body() {
-		out.println("Home page");
-	}
-
-	@Override
-	public void footer() {
-		out.println("</body>");
-		out.println("</html>");
+	public ST getTitle() {
+		return new ST("Home page");
 	}
 }

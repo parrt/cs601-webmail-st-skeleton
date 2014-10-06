@@ -1,4 +1,9 @@
+package cs601.webmail;
+
+import cs601.webmail.misc.STListener;
 import cs601.webmail.pages.DispatchServlet;
+import cs601.webmail.pages.HomePage;
+import cs601.webmail.pages.UserListPage;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
@@ -6,7 +11,20 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WebmailServer {
+	public static final String WEBMAIL_TEMPLATES_ROOT = "resources/cs601/webmail/templates";
+
+	public static final STListener stListener = new STListener();
+
+	public static Map<String,Class> mapping = new HashMap<String, Class>();
+	static {
+		mapping.put("/", HomePage.class);
+		mapping.put("/users", UserListPage.class);
+	}
+
 	public static void main(String[] args) throws Exception {
 		if ( args.length<2 ) {
 			System.err.println("java cs601.webmail.Server static-files-dir log-dir");
