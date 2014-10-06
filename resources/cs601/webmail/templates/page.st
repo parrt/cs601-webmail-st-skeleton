@@ -1,4 +1,4 @@
-page(title,body) ::= <<
+page(title, body) ::= <<
 <html>
 <head>
 <title>$title$</title>
